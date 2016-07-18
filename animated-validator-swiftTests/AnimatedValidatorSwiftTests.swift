@@ -17,7 +17,7 @@ class ValidatorViewController: QuickSpec {
     override func spec() {
         
         let tester = KIFUITestActor()
-        
+                
         let submitButton =  tester.waitForViewWithAccessibilityLabel(Constants.SUBMITBUTTON) as! UIButton
         
         describe("submit button:") {
@@ -29,6 +29,8 @@ class ValidatorViewController: QuickSpec {
                 tester.tapViewWithAccessibilityLabel(Constants.EMAILTEXTFIELD)
                 tester.enterText("susan@flatironschool.com", intoViewWithAccessibilityLabel: Constants.EMAILTEXTFIELD)
                 
+                @IBAction func textFieldConfirmEmailEditingDidEnd(sender: AnyObject) {
+                }
                 expect(submitButton.enabled).to(beFalse())
                 
                 tester.tapViewWithAccessibilityLabel(Constants.EMAILCONFIRMTEXTFIELD)
