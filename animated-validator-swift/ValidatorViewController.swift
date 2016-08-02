@@ -32,115 +32,86 @@ class ValidatorViewController: UIViewController, UITextFieldDelegate {
     }
     
     /////////////////////     IBActions     ///////////////////////////////
+    
     @IBAction func textFieldEmailEditingDidEnd(sender: AnyObject) {
-        print("Text Field Email")
-        if validateEmail(emailTextField.text) {
-            print("GOOD EMAIL")
-        } else {
-            animationFlashingField(emailTextField)
+        if let email = self.emailTextField.text {
+            if !self.isValid("email", string: email) {
+                self.animateTextField(self.emailTextField)
+            }
         }
-        
     }
     
-    @IBAction func textFieldEmailConformationEditingDidEnd(sender: AnyObject){
-        print("text field email conformation")
-        if validateEmail(emailConfirmationTextField.text) && validateConformationEmail(emailConfirmationTextField.text) {
-            submitButton.enabled = true
-            print("GOOD 2d EMAIL")
-        } else {
-            animationFlashingField(emailConfirmationTextField)
+    @IBAction func textFieldEmailConfirmationEditingDidEnd(sender: AnyObject){
+        if let emailConfirm = self.emailConfirmationTextField.text {
+            if !self.isValid("emailConfirm", string: emailConfirm) {
+                self.animateTextField(self.emailConfirmationTextField)
+            }
         }
-        
     }
     
     @IBAction func textFieldPhoneEditingDidEnd(sender: AnyObject) {
-        print("text field phone")
-        if validatePhoneNumber(phoneTextField.text) {
-            print("GOOD PHONE")
-        } else {
-            animationFlashingField(phoneTextField)
+        if let phone = self.phoneTextField.text {
+            if !isValid("phone", string: phone) {
+                self.animateTextField(self.phoneTextField)
+            }
         }
     }
     
     @IBAction func passwordTextFielsEditingDidEnd(sender: AnyObject) {
-        print("text field password")
-        if validatePassword(passwordTextField.text) {
-            print("GOOD PASSWORD")
-        } else {
-            animationFlashingField(passwordTextField)
+        if let password = self.passwordTextField.text {
+            if !isValid("password", string: password) {
+                self.animateTextField(self.passwordTextField)
+            }
+        }
+    }
+
+    @IBAction func passwordConfirmationTextFieldEditingDidEnd(sender: AnyObject) {
+        if let passwordConfirm = self.passwordConfirmTextField.text {
+            if !isValid("passwordConfirm", string: passwordConfirm) {
+                self.animateTextField(self.passwordConfirmTextField)
+            }
         }
     }
     
-    @IBAction func passwordConfirmationTextFieldEditingDidEnd(sender: AnyObject) {
-        print("text field conformation password")
-        if validateConfirmationPassword(passwordConfirmTextField.text) {
-           print("GOOD CONF PASSWORD")
-        } else {
-            animationFlashingField(passwordConfirmTextField)
+    /////////////////////     Animation     ///////////////////////////////
+
+    func animateTextField(textField: UITextField) {
+        UIView.animateWithDuration(0.5, animations: { () -> Void in
+            textField.backgroundColor = UIColor.redColor()
+            self.view.layoutIfNeeded()
+        }) { (true) in
+            textField.backgroundColor = UIColor.whiteColor()
+        
         }
     }
     
     /////////////////////     Validations     ///////////////////////////////
-    func validateConfirmationPassword(password: String?) -> Bool {
-        var result = false
-        if validatePassword(password) &&
-            passwordTextField.text != nil &&
-                passwordConfirmTextField.text != nil &&
-                    passwordTextField.text == passwordConfirmTextField.text {
-            result = true
-        }
-        return result
-    }
-   
-    func validatePassword(password: String?) -> Bool {
-        var result = false
-        if let password = password {
-            if password.characters.count > 5 {
-                result = true
-            }
-        }
-        return result
-    }
     
-    func validatePhoneNumber(phone: String?) -> Bool {
-        var result = false
-        if phone != nil {
-            let number = Int(phone!)
-            if number != nil && phone?.characters.count > 6 {
-                result = true
-            }
-        }
-        return result
-    }
-    
-    func validateConformationEmail(email: String?) -> Bool {
-        var result = false
-        if emailTextField.text == email {
-            result = true
-        }
-        return result
-    }
-    
-    func validateEmail(email: String?) -> Bool {
-        var result = false
-        if let email = email {
-            if email.containsString("@") && email.containsString(".") {
-                result = true
-            }
-        }
-        return result
-    }
-    
-    func animationFlashingField(textfieldID: UITextField) {
-        UIView.animateWithDuration(0.5, animations: { () -> Void in
-            textfieldID.backgroundColor = UIColor.redColor()
-            self.view.layoutIfNeeded()
-        }) { (true) in
-            textfieldID.backgroundColor = UIColor.whiteColor()
+    func isValid(type: String, string: String) -> Bool {
         
+        switch type {
+            
+        case "email":
+            let emailPredicate = NSPredicate(format:"SELF MATCHES %@", "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}")
+            return emailPredicate.evaluateWithObject(string)
+            
+        case "emailConfirm":
+            return string == self.emailConfirmationTextField.text && string != ""
+            
+        case "phone":
+            let phonePredicate = NSPredicate(format: "SELF MATCHES %@", "^\\d{3}-\\d{3}-\\d{4}$")
+            return phonePredicate.evaluateWithObject(string)
+            
+        case "password":
+            return string.characters.count > 6
+            
+        case "passwordConfirm":
+            return string == self.passwordTextField.text && string != ""
+            
+        default:
+            return false
         }
     }
-
     
     
     
