@@ -35,7 +35,7 @@ class ValidatorViewController: UIViewController, UITextFieldDelegate {
     
     @IBAction func textFieldEmailEditingDidEnd(sender: AnyObject) {
         if let email = self.emailTextField.text {
-            if !self.isValid("email", string: email) {
+            if !self.isValid(.email, string: email) {
                 self.animateTextField(self.emailTextField)
             }
         }
@@ -43,7 +43,7 @@ class ValidatorViewController: UIViewController, UITextFieldDelegate {
     
     @IBAction func textFieldEmailConfirmationEditingDidEnd(sender: AnyObject){
         if let emailConfirm = self.emailConfirmationTextField.text {
-            if !self.isValid("emailConfirm", string: emailConfirm) {
+            if !self.isValid(.emailConfirm, string: emailConfirm) {
                 self.animateTextField(self.emailConfirmationTextField)
             }
         }
@@ -51,7 +51,7 @@ class ValidatorViewController: UIViewController, UITextFieldDelegate {
     
     @IBAction func textFieldPhoneEditingDidEnd(sender: AnyObject) {
         if let phone = self.phoneTextField.text {
-            if !isValid("phone", string: phone) {
+            if !isValid(.phone, string: phone) {
                 self.animateTextField(self.phoneTextField)
             }
         }
@@ -59,7 +59,7 @@ class ValidatorViewController: UIViewController, UITextFieldDelegate {
     
     @IBAction func passwordTextFielsEditingDidEnd(sender: AnyObject) {
         if let password = self.passwordTextField.text {
-            if !isValid("password", string: password) {
+            if !isValid(.password, string: password) {
                 self.animateTextField(self.passwordTextField)
             }
         }
@@ -67,7 +67,7 @@ class ValidatorViewController: UIViewController, UITextFieldDelegate {
 
     @IBAction func passwordConfirmationTextFieldEditingDidEnd(sender: AnyObject) {
         if let passwordConfirm = self.passwordConfirmTextField.text {
-            if !isValid("passwordConfirm", string: passwordConfirm) {
+            if !isValid(.passwordConfirm, string: passwordConfirm) {
                 self.animateTextField(self.passwordConfirmTextField)
             }
         }
@@ -87,29 +87,30 @@ class ValidatorViewController: UIViewController, UITextFieldDelegate {
     
     /////////////////////     Validations     ///////////////////////////////
     
-    func isValid(type: String, string: String) -> Bool {
-        
+    enum TextFieldType {
+        case email, emailConfirm, phone, password, passwordConfirm
+    }
+    
+    func isValid(type:TextFieldType, string: String) -> Bool {
+    
         switch type {
             
-        case "email":
+        case .email:
             let emailPredicate = NSPredicate(format:"SELF MATCHES %@", "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}")
             return emailPredicate.evaluateWithObject(string)
             
-        case "emailConfirm":
+        case .emailConfirm:
             return string == self.emailConfirmationTextField.text && string != ""
             
-        case "phone":
+        case .phone:
             let phonePredicate = NSPredicate(format: "SELF MATCHES %@", "^\\d{3}-\\d{3}-\\d{4}$")
             return phonePredicate.evaluateWithObject(string)
             
-        case "password":
+        case .password:
             return string.characters.count > 6
             
-        case "passwordConfirm":
+        case .passwordConfirm:
             return string == self.passwordTextField.text && string != ""
-            
-        default:
-            return false
         }
     }
     
